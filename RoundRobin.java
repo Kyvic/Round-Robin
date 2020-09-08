@@ -78,6 +78,7 @@ public class RoundRobin{
 		
 		LinkedList<Integer> ready = new LinkedList<Integer>();
 		
+		//here is the place that contain error/bug 
 		int temp = 0;
 		
 		if(arrivalTime[temp] <= limit){
