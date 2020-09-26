@@ -45,27 +45,34 @@ public class RoundRobin{
 		}
 		
 		//Round Robin 
+		int temp0, temp4, temp5, temp6, temp7;
+		for (int i = 0; i < numProcess; i++) {
+            for (int j = i + 1; j < numProcess; j++) { 
+                if (arrivalTime[i] > arrivalTime[j]){
+                    temp0 = arrivalTime[i];
+                    arrivalTime[i] = arrivalTime[j];
+                    arrivalTime[j] = temp0;
+					
+					temp4 = p_id[i];
+					p_id[i] = p_id[j];
+                    p_id[j] = temp4;
+					
+					temp5 = burstTime[i];
+					burstTime[i] = burstTime[j];
+                    burstTime[j] = temp5;
+					
+					temp6 = arrivaltime_array[i];
+					arrivaltime_array[i] = arrivaltime_array[j];
+                    arrivaltime_array[j] = temp6;
+					
+					temp7 = bursttime_array[i];
+					bursttime_array[i] = bursttime_array[j];
+                    bursttime_array[j] = temp7;
+                }
+            }
+        }
+		
 		boolean[] isReady = new boolean[p_id.length];
-		for (int i = 0; i < arrivalTime.length - 1; i++) {
-			for (int j = 0; j < arrivalTime.length - 1 - i; j++) {
-				if (arrivalTime[j] > arrivalTime[j + 1]) {
-					int temp1 = arrivalTime[j];
-					arrivalTime[j] = arrivalTime[j + 1];
-					arrivalTime[j + 1] = temp1;
-
-					int temp2 = burstTime[j];
-					burstTime[j] = burstTime[j + 1];
-					burstTime[j + 1] = temp2;
-
-					int temp3 = p_id[j];
-					p_id[j] = p_id[j + 1];
-					p_id[j + 1] = temp3;
-
-				}
-
-			}
-
-		}
 		
 		int limit = 0;
 		int totalBurstTime = 0;
@@ -78,53 +85,49 @@ public class RoundRobin{
 		
 		LinkedList<Integer> ready = new LinkedList<Integer>();
 		
-		//here is the place that contain error/bug 
 		int temp = 0;
 		
 		if(arrivalTime[temp] <= limit){
 			if(burstTime[temp] > tq){
 				burstTime[temp] = burstTime[temp] - tq;
 				chart.add(tq);
-				track.add(temp);
+				track.add(p_id[temp]);
 				totalBurstTime += tq;
 				addChart.add(totalBurstTime);
 				limit = limit + tq;
 			} 
 			else{
 				chart.add(burstTime[temp]);
-				track.add(temp);
+				track.add(p_id[temp]);
 				totalBurstTime += burstTime[temp];
 				addChart.add(totalBurstTime);
 				limit = limit + burstTime[temp];
 				burstTime[temp] = 0;
 			}
 		}
-		
+	
 		for (int i = 1; i < p_id.length; i++){
 			if (arrivalTime[i] <= limit && isReady[p_id[i]] == false){
 				ready.addLast(p_id[i]);
 				isReady[p_id[i]] = true;
 			}
-
 		}
 		
 		while(!ready.isEmpty()){
 			if(burstTime[temp] != 0){
 				ready.addLast(p_id[temp]);
-
 			}
 			int temp2 = ready.removeFirst();
 			for(int i = 0; i < p_id.length; i++){
 				if(p_id[i] == temp2){
 					temp = i;
-
 				}
 			}
 			if(arrivalTime[temp] <= limit){
 				if(burstTime[temp] > tq){
 					burstTime[temp] = burstTime[temp] - tq;
 					chart.add(tq);
-					track.add(temp);
+					track.add(p_id[temp]);
 					totalBurstTime += tq;
 					addChart.add(totalBurstTime);
 					limit = limit + tq;
@@ -132,7 +135,7 @@ public class RoundRobin{
 				} 
 				else{
 					chart.add(burstTime[temp]);
-					track.add(temp);
+					track.add(p_id[temp]);
 					totalBurstTime += burstTime[temp];
 					addChart.add(totalBurstTime);
 					limit = limit + burstTime[temp];
@@ -157,12 +160,11 @@ public class RoundRobin{
 			int index = 0;
 			for (int j = 0; j < track.size(); j++){
 				if (i == track.get(j)){
-					index = j;
-
+					index = j+1;
 				}
 			}
 			int s = 0;
-			for (int k = 0; k <= index; k++){
+			for (int k = 0; k < index; k++){
 				s = s + chart.get(k);
 			}
 			ct[i] = s;
@@ -194,14 +196,14 @@ public class RoundRobin{
 			totaltat += tat[i];
 
 		}
-		avgtat = totaltat / p_id.length;
+		avgtat = (double)totaltat / (double)p_id.length;
 		double avgwt = 0;
 		int totalwt = 0;
 		for (int i = 0; i < wt.length; i++) {
 			totalwt += wt[i];
 
 		}
-		avgwt = totalwt / p_id.length;
+		avgwt = (double)totalwt / (double)p_id.length;
 		
 		// [C] Gannt chart
 		System.out.println();
